@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shivam Roy — Software Engineer</title>
+<meta name="description" content="Shivam Roy — Computer Science graduate working across full-stack development, data engineering, and DevOps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     DESIGN TOKENS — change these to re-theme the whole site
+     ============================================================ */
+  :root{
+    --bg:        #0F1B2D;
+    --bg-deep:   #0A1420;
+    --panel:     #16253B;
+    --panel-2:   #1C314D;
+    --grid-line: #24405C;
+    --grid-faint:#1A2B40;
+    --ink:       #E9EFF5;
+    --ink-dim:   #93A7BC;
+    --ink-faint: #5D7286;
+    --accent:    #7DD3E0;
+    --accent-2:  #F2A65A;
+    --radius:    2px;
+    --maxw:      1120px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body:    'IBM Plex Sans', sans-serif;
+    --font-mono:    'IBM Plex Mono', monospace;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    background-image:
+      linear-gradient(var(--grid-faint) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-faint) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-attachment: fixed;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  ul{ list-style: none; }
+  img{ max-width: 100%; display:block; }
+
+  ::selection{ background: var(--accent); color: var(--bg-deep); }
+
+  :focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .wrap{
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* margin rail — the schematic spine that runs down the page */
+  .rail{
+    position: fixed;
+    top: 0; bottom: 0; left: 50%;
+    margin-left: calc(var(--maxw) / -2 - 1px);
+    width: 1px;
+    background: var(--grid-line);
+    z-index: 1;
+    display: none;
+  }
+  @media (min-width: 1220px){ .rail{ display:block; } }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  header.nav{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(10,20,32,0.86);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--grid-line);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content: space-between;
+    height: 64px;
+  }
+  .brand{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .brand .dot{
+    width:8px; height:8px; background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(125,211,224,0.15);
+  }
+  nav.links{ display:none; gap: 28px; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.04em; }
+  nav.links a{ color: var(--ink-dim); text-transform: uppercase; position:relative; padding: 4px 0; }
+  nav.links a:hover{ color: var(--accent); }
+  @media (min-width: 860px){ nav.links{ display:flex; } }
+
+  .nav-cta{
+    display:none;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    border: 1px solid var(--grid-line);
+    color: var(--ink);
+    padding: 8px 14px;
+    letter-spacing: 0.03em;
+  }
+  .nav-cta:hover{ border-color: var(--accent); color: var(--accent); }
+  @media (min-width:860px){ .nav-cta{ display:inline-block; } }
+
+  .menu-btn{
+    background:none; border:1px solid var(--grid-line); color: var(--ink);
+    width: 40px; height:40px; font-family: var(--font-mono); cursor:pointer;
+  }
+  @media (min-width:860px){ .menu-btn{ display:none; } }
+
+  #mobile-menu{
+    display:none; border-bottom: 1px solid var(--grid-line);
+    background: var(--bg-deep);
+  }
+  #mobile-menu.open{ display:block; }
+  #mobile-menu a{
+    display:block; padding: 14px 28px; font-family: var(--font-mono);
+    font-size: 0.85rem; color: var(--ink-dim); border-top: 1px solid var(--grid-faint);
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  #mobile-menu a:hover{ color: var(--accent); }
+
+  /* ============================================================
+     FIGURE LABEL — recurring section marker (blueprint annotation)
+     ============================================================ */
+  .figure{
+    display:flex; align-items:center; gap: 14px;
+    margin-bottom: 44px;
+  }
+  .figure .num{
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    border: 1px solid var(--grid-line);
+    padding: 5px 9px;
+    letter-spacing: 0.05em;
+  }
+  .figure .line{ flex:1; height:1px; background: var(--grid-line); }
+  .figure h2{
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  section{ padding: 96px 0; position: relative; }
+  section + section{ border-top: 1px solid var(--grid-faint); }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{ padding-top: 88px; padding-bottom: 72px; }
+  .hero-grid{
+    display:grid; gap: 44px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 980px){ .hero-grid{ grid-template-columns: auto 1.1fr 0.85fr; align-items:center; gap: 52px; } }
+
+  .portrait{
+    position: relative;
+    width: 168px;
+    border: 1px solid var(--grid-line);
+    justify-self: center;
+  }
+  @media (min-width: 980px){ .portrait{ justify-self: start; } }
+  .portrait::before, .portrait::after{
+    content:''; position:absolute; width:12px; height:12px;
+    border-top: 1px solid var(--accent); border-left: 1px solid var(--accent);
+    top:-1px; left:-1px;
+  }
+  .portrait::after{
+    left:auto; right:-1px; top:auto; bottom:-1px;
+    border-top:none; border-left:none;
+    border-bottom: 1px solid var(--accent); border-right: 1px solid var(--accent);
+  }
+  .portrait img{
+    width: 100%; aspect-ratio: 4 / 4.35; object-fit: cover; display:block;
+    filter: grayscale(10%) contrast(1.03);
+  }
+  .portrait-tag{
+    font-family: var(--font-mono); font-size: 0.62rem; color: var(--ink-faint);
+    letter-spacing: 0.05em; text-transform: uppercase;
+    text-align: center; padding: 9px 4px; border-top: 1px solid var(--grid-line);
+  }
+
+  .kicker{
+    font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent-2);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    display:flex; align-items:center; gap:10px; margin-bottom: 22px;
+  }
+  .kicker::before{ content:''; width:22px; height:1px; background: var(--accent-2); }
+
+  h1.title{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 6vw, 4.1rem);
+    line-height: 1.03;
+    letter-spacing: -0.01em;
+  }
+  h1.title span{ color: var(--accent); }
+
+  .tagline{
+    margin-top: 22px;
+    max-width: 46ch;
+    color: var(--ink-dim);
+    font-size: 1.05rem;
+  }
+
+  .hero-actions{
+    margin-top: 34px;
+    display:flex; flex-wrap: wrap; gap: 14px;
+  }
+  .btn{
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    padding: 13px 22px;
+    border: 1px solid var(--grid-line);
+    display:inline-flex; align-items:center; gap:9px;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .btn.primary{ background: var(--accent); color: var(--bg-deep); border-color: var(--accent); font-weight: 500; }
+  .btn.primary:hover{ background: transparent; color: var(--accent); }
+  .btn.ghost{ color: var(--ink); }
+  .btn.ghost:hover{ border-color: var(--accent); color: var(--accent); }
+  .btn svg{ width:15px; height:15px; }
+
+  .hero-meta{
+    margin-top: 40px;
+    display:flex; gap: 26px; flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint);
+  }
+  .hero-meta a{ color: var(--ink-dim); }
+  .hero-meta a:hover{ color: var(--accent); }
+
+  /* Layered stack — signature element: skill domains as OSI-style layers */
+  .stack{ display:flex; flex-direction: column; gap: 10px; }
+  .layer{
+    position: relative;
+    border: 1px solid var(--grid-line);
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    padding: 16px 18px;
+    display:flex; align-items:center; justify-content: space-between;
+    transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    cursor: default;
+  }
+  .layer:hover{
+    transform: translateX(6px);
+    border-color: var(--accent);
+  }
+  .layer .l-name{
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+  }
+  .layer .l-tag{
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+  }
+  .layer:hover .l-tag{ color: var(--accent-2); }
+  .layer::before{
+    content: attr(data-idx);
+    position:absolute; left:-1px; top:-1px; bottom:-1px;
+    width: 4px; background: var(--grid-line);
+    transition: background .18s ease;
+  }
+  .layer:hover::before{ background: var(--accent); }
+
+  /* ============================================================
+     ABOUT
+     ============================================================ */
+  .about-grid{ display:grid; gap: 40px; grid-template-columns: 1fr; }
+  @media (min-width: 860px){ .about-grid{ grid-template-columns: 1.3fr 0.7fr; } }
+  .about-text p{ color: var(--ink-dim); font-size: 1rem; max-width: 62ch; }
+  .about-text p + p{ margin-top: 16px; }
+  .about-text strong{ color: var(--ink); font-weight: 500; }
+
+  .stat-card{
+    border: 1px solid var(--grid-line);
+    padding: 20px; display:flex; flex-direction: column; gap: 4px;
+  }
+  .stat-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--grid-line); border:1px solid var(--grid-line); }
+  .stat-grid .stat-card{ border:none; background: var(--bg-deep); }
+  .stat-card .num{ font-family: var(--font-display); font-size: 1.7rem; color: var(--accent); font-weight: 600; }
+  .stat-card .lbl{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* ============================================================
+     SKILLS
+     ============================================================ */
+  .skill-groups{ display:grid; gap: 1px; background: var(--grid-line); border: 1px solid var(--grid-line); }
+  .skill-group{ background: var(--bg-deep); padding: 22px 24px; }
+  @media (min-width: 700px){ .skill-groups{ grid-template-columns: 1fr 1fr; } }
+  .skill-group h3{
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-2);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px;
+  }
+  .chip-row{ display:flex; flex-wrap: wrap; gap: 8px; }
+  .chip{
+    font-family: var(--font-mono); font-size: 0.76rem;
+    border: 1px solid var(--grid-line); color: var(--ink-dim);
+    padding: 6px 10px;
+  }
+
+  /* ============================================================
+     EXPERIENCE / CARDS
+     ============================================================ */
+  .card{
+    border: 1px solid var(--grid-line);
+    padding: 28px;
+    position: relative;
+  }
+  .card + .card{ margin-top: 18px; }
+  /* corner brackets — blueprint annotation motif */
+  .card::before, .card::after{
+    content:''; position:absolute; width:10px; height:10px;
+    border-top: 1px solid var(--accent); border-left: 1px solid var(--accent);
+    top:-1px; left:-1px;
+  }
+  .card::after{
+    left:auto; right:-1px; top:auto; bottom:-1px;
+    border-top:none; border-left:none;
+    border-bottom: 1px solid var(--accent); border-right: 1px solid var(--accent);
+  }
+
+  .card[hidden]{ display:none; }
+
+  .card-head{
+    display:flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px;
+    margin-bottom: 6px;
+  }
+  .card-head h3{ font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+  .card-head .role-org{ color: var(--accent); font-size: 0.92rem; margin-top: 2px; }
+  .card-head time{
+    font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-faint);
+    white-space: nowrap; padding-top: 4px;
+  }
+  .card ul.points{ margin-top: 14px; display:flex; flex-direction: column; gap: 9px; }
+  .card ul.points li{
+    color: var(--ink-dim); font-size: 0.94rem; padding-left: 18px; position: relative;
+  }
+  .card ul.points li::before{
+    content:''; position:absolute; left:0; top: 9px; width:6px; height:1px; background: var(--accent-2);
+  }
+
+  /* ============================================================
+     PROJECTS
+     ============================================================ */
+  .proj-grid{ display:grid; gap: 22px; grid-template-columns: 1fr; }
+  @media (min-width: 760px){ .proj-grid{ grid-template-columns: 1fr 1fr; } }
+  .proj-card{
+    border: 1px solid var(--grid-line);
+    padding: 26px;
+    display:flex; flex-direction: column;
+    background: var(--bg-deep);
+    transition: border-color .15s ease;
+  }
+  .proj-card[hidden]{ display:none; }
+  .proj-card:hover{ border-color: var(--accent); }
+  .proj-top{ display:flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .proj-top h3{ font-family: var(--font-display); font-size: 1.12rem; font-weight: 600; }
+  .proj-links{ display:flex; gap: 10px; flex-shrink: 0; }
+  .proj-links a{
+    width: 32px; height: 32px; border: 1px solid var(--grid-line);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .proj-links a:hover{ border-color: var(--accent); color: var(--accent); }
+  .proj-links svg{ width:15px; height:15px; }
+  .proj-when{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-faint); margin-top: 4px; }
+  .proj-desc{ margin-top: 14px; color: var(--ink-dim); font-size: 0.92rem; }
+  .proj-desc li{ padding-left: 16px; position: relative; margin-top: 8px; }
+  .proj-desc li::before{ content:''; position:absolute; left:0; top:9px; width:5px; height:1px; background: var(--accent-2); }
+  .proj-stack{ margin-top: 18px; display:flex; flex-wrap: wrap; gap: 7px; }
+  .proj-stack span{
+    font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-faint);
+    border: 1px solid var(--grid-faint); padding: 4px 8px;
+  }
+  .proj-metrics{ display:flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .proj-metrics .metric{
+    display:flex; flex-direction: column; border-left: 2px solid var(--accent);
+    padding: 2px 0 2px 10px;
+  }
+  .proj-metrics .metric b{ font-family: var(--font-display); font-size: 1.05rem; color: var(--ink); }
+  .proj-metrics .metric span{ font-family: var(--font-mono); font-size: 0.65rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.03em; }
+  .proj-roadmap{
+    margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--grid-line);
+  }
+  .proj-roadmap h4{
+    font-family: var(--font-mono); font-size: 0.66rem; color: var(--accent-2);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+  }
+  .proj-roadmap ul{ display:flex; flex-direction: column; gap: 7px; }
+  .proj-roadmap li{
+    font-size: 0.86rem; color: var(--ink-faint); padding-left: 16px; position: relative;
+  }
+  .proj-roadmap li::before{
+    content:'→'; position:absolute; left:0; top:0; color: var(--accent); font-size: 0.8rem;
+  }
+
+  /* ============================================================
+     CERTIFICATIONS
+     ============================================================ */
+  .cert-list{ display:flex; flex-direction: column; border: 1px solid var(--grid-line); }
+  .cert-item{
+    display:flex; justify-content: space-between; align-items: center;
+    gap: 16px; padding: 18px 22px;
+    border-top: 1px solid var(--grid-line);
+  }
+  .cert-item:first-child{ border-top:none; }
+  .cert-item[hidden]{ display:none; }
+  .cert-item .c-name{ font-size: 0.95rem; }
+  .cert-item .c-issuer{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-faint); margin-top: 3px; }
+  .cert-badge{
+    font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent);
+    border: 1px solid var(--grid-line); padding: 4px 9px; white-space: nowrap;
+  }
+
+  /* ============================================================
+     EDUCATION
+     ============================================================ */
+  .edu-item{ display:flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 22px 0; border-top: 1px solid var(--grid-faint); }
+  .edu-item:first-child{ border-top:none; }
+  .edu-item h3{ font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; }
+  .edu-item .deg{ color: var(--ink-dim); font-size: 0.9rem; margin-top: 3px; }
+  .edu-item time{ font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-faint); }
+  .edu-item .score{ font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-2); margin-top: 6px; }
+
+  /* ============================================================
+     CONTACT / FOOTER
+     ============================================================ */
+  footer{ padding: 80px 0 40px; }
+  .contact-box{
+    border: 1px solid var(--grid-line);
+    padding: 48px 32px;
+    text-align: center;
+    position: relative;
+  }
+  .contact-box h2{
+    font-family: var(--font-display); font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+    font-weight: 700;
+  }
+  .contact-box p{ color: var(--ink-dim); margin-top: 14px; }
+  .contact-actions{ margin-top: 30px; display:flex; justify-content:center; gap: 14px; flex-wrap: wrap; }
+
+  .foot-bottom{
+    margin-top: 40px; display:flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-faint);
+  }
+  .foot-bottom a:hover{ color: var(--accent); }
+
+  /* reveal on scroll */
+  .reveal{ opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+  .reveal.in{ opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<div class="rail"></div>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand"><span class="dot"></span>SHIVAM ROY</a>
+    <nav class="links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#certifications">Certs</a>
+      <a href="#education">Education</a>
+    </nav>
+    <a class="nav-cta" href="#contact">Get in touch</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">≡</button>
+  </div>
+  <div id="mobile-menu">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#certifications">Certifications</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="portrait reveal">
+        <img src="profile.jpg" alt="Portrait of Shivam Roy">
+        <div class="portrait-tag">FIG. 00 — S. Roy</div>
+      </div>
+      <div>
+        <div class="kicker">Computer Science · KIIT '26</div>
+        <h1 class="title">Shivam <span>Roy</span></h1>
+        <p class="tagline">I build across the stack — from React front ends to ML inference services to the
+          containers that ship them. Currently sharpening delivery and stakeholder instincts as a Business Analyst,
+          while shipping full-stack, data, and systems projects on the side.</p>
+
+        <div class="hero-actions">
+          <a class="btn primary" href="#projects">
+            View projects
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a class="btn ghost" href="/resume.pdf" download>
+            Download resume
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+          </a>
+        </div>
+
+        <div class="hero-meta">
+          <a href="mailto:shivamkumarroy04@gmail.com">shivamkumarroy04@gmail.com</a>
+          <a href="tel:+918227835122">+91 82278 35122</a>
+          <a href="https://github.com/shivamRoy04" target="_blank" rel="noopener">github.com/shivamRoy04</a>
+          <a href="https://linkedin.com/in/shivam-roy-438a81264" target="_blank" rel="noopener">linkedin.com/in/shivam-roy</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="stack" aria-label="Areas of work">
+          <div class="layer" data-idx="01"><span class="l-name">FULL-STACK</span><span class="l-tag">React · Next.js · Node · .NET</span></div>
+          <div class="layer" data-idx="02"><span class="l-name">DATA / ML</span><span class="l-tag">Pandas · XGBoost · TensorFlow</span></div>
+          <div class="layer" data-idx="03"><span class="l-name">DEVOPS</span><span class="l-tag">Docker · Kubernetes · CI/CD</span></div>
+          <div class="layer" data-idx="04"><span class="l-name">NETWORKS</span><span class="l-tag">TCP/IP · TLS · Packet Analysis</span></div>
+          <div class="layer" data-idx="05"><span class="l-name">BUSINESS</span><span class="l-tag">Agile · Stakeholders · Analytics</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about">
+    <div class="wrap">
+      <div class="figure reveal"><span class="num">FIG. 01</span><h2>About</h2><span class="line"></span></div>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p><strong>Computer Science graduate (B.Tech, KIIT, 2026)</strong> with hands-on experience spanning
+            full-stack development, data science / data engineering, and DevOps — plus working knowledge of
+            Java and .NET from Cognizant's Deep Skilling Program.</p>
+          <p>I have production experience with Docker, Kubernetes, and REST API design, and I'm currently working
+            as a Business Analyst, which has sharpened my Agile ceremony fluency, stakeholder communication, and
+            requirement analysis. I'm looking to grow within a team spanning Java Full Stack, .NET, Data
+            Engineering, DevOps, or QA.</p>
+        </div>
+        <div class="stat-grid reveal">
+          <div class="stat-card"><span class="num">8.52</span><span class="lbl">CGPA / 10.0</span></div>
+          <div class="stat-card"><span class="num">4+</span><span class="lbl">Shipped projects</span></div>
+          <div class="stat-card"><span class="num">85%</span><span class="lbl">ML model accuracy</span></div>
+          <div class="stat-card"><span class="num">6</span><span class="lbl">Certifications</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SKILLS ================= -->
+  <section id="skills">
+    <div class="wrap">
+      <div class="figure reveal"><span class="num">FIG. 02</span><h2>Skills</h2><span class="line"></span></div>
+      <div class="skill-groups reveal">
+        <div class="skill-group">
+          <h3>Languages &amp; Full-Stack</h3>
+          <div class="chip-row">
+            <span class="chip">Java</span><span class="chip">Python</span><span class="chip">C</span>
+            <span class="chip">C++</span><span class="chip">JavaScript</span><span class="chip">.NET</span>
+            <span class="chip">React.js</span><span class="chip">Next.js</span><span class="chip">Node.js</span>
+            <span class="chip">Express.js</span><span class="chip">FastAPI</span><span class="chip">Tailwind CSS</span>
+            <span class="chip">Bootstrap</span><span class="chip">MVC</span><span class="chip">UML</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Databases &amp; APIs</h3>
+          <div class="chip-row">
+            <span class="chip">MySQL</span><span class="chip">MongoDB Atlas</span><span class="chip">SQL</span>
+            <span class="chip">REST API Design</span><span class="chip">Swagger / OpenAPI</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Data Science &amp; Engineering</h3>
+          <div class="chip-row">
+            <span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">scikit-learn</span>
+            <span class="chip">TensorFlow</span><span class="chip">XGBoost</span><span class="chip">Matplotlib</span>
+            <span class="chip">Pipeline Automation</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>DevOps, Cloud &amp; QA</h3>
+          <div class="chip-row">
+            <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Git</span>
+            <span class="chip">GitHub Actions</span><span class="chip">CI/CD</span><span class="chip">Cloudflare Workers</span>
+            <span class="chip">Render</span><span class="chip">PyTest</span><span class="chip">Agile / Scrum</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EXPERIENCE =================
+       To hide an entry: add the word  hidden  to its <article class="card" ...> tag.
+       To add an entry: duplicate an <article class="card"> block and edit its contents. -->
+  <section id="experience">
+    <div class="wrap">
+      <div class="figure reveal"><span class="num">FIG. 03</span><h2>Experience</h2><span class="line"></span></div>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <div>
+            <h3>Business Analyst</h3>
+            <div class="role-org">Aristok Technologies — Digital Growth &amp; Analytics Division</div>
+          </div>
+          <time>Apr 2026 — Present</time>
+        </div>
+        <ul class="points">
+          <li>Collaborate with cross-functional pods — developers and analysts — to coordinate sprint tasks, review deliverables, and maintain workflow visibility, working directly within an Agile/SDLC-style delivery cadence.</li>
+          <li>Automated recurring campaign-performance reporting using Python and the Google Sheets API, cutting manual data-pull time by roughly 40%.</li>
+          <li>Ran data-driven funnel analysis for Porter.in across Google Ads and Meta Ads, translating raw data into insights presented directly on client calls.</li>
+          <li>Own end-to-end client communication cadence — agenda setting, structured reporting, and requirement clarification.</li>
+        </ul>
+      </article>
+
+      <!-- Example of a hidden / draft entry — remove the `hidden` attribute to show it -->
+      <article class="card reveal" hidden>
+        <div class="card-head">
+          <div>
+            <h3>Role Title</h3>
+            <div class="role-org">Company Name — Team</div>
+          </div>
+          <time>Start — End</time>
+        </div>
+        <ul class="points">
+          <li>Add a bullet describing an outcome, with a number if you have one.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= PROJECTS =================
+       - To hide a project: add  hidden  to its <article class="proj-card" ...> tag.
+       - To reorder projects: cut an entire <article class="proj-card">...</article> block and
+         paste it earlier/later among the others — display order is just document order.
+       - To add a project: copy the hidden template card at the bottom of this section, remove
+         `hidden`, and fill it in.
+       - Swap the href on the GitHub / live-demo icons for each project's real links. -->
+  <section id="projects">
+    <div class="wrap">
+      <div class="figure reveal"><span class="num">FIG. 04</span><h2>Projects</h2><span class="line"></span></div>
+
+      <div class="proj-grid reveal">
+
+        <article class="proj-card">
+          <div class="proj-top">
+            <div>
+              <h3>Customer Churn Prediction Platform</h3>
+              <div class="proj-when">Jan – Feb 2026</div>
+            </div>
+            <div class="proj-links">
+              <a href="https://github.com/shivamRoy04" target="_blank" rel="noopener" aria-label="View source on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.9-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.61.69.5A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg>
+              </a>
+            </div>
+          </div>
+          <ul class="proj-desc">
+            <li>End-to-end ML inference service that scores a telecom customer's likelihood to churn in real time, so retention teams can act before a customer leaves rather than after.</li>
+            <li>An XGBoost model trained on customer usage, billing, and support-interaction data reaches 85% accuracy and 88% ROC-AUC — meaningfully better than a coin-flip baseline on an imbalanced churn dataset.</li>
+            <li>Predictions are served through a FastAPI REST endpoint with auto-generated Swagger docs, health checks, and an automated PyTest integration suite that runs before every deploy.</li>
+            <li>Containerised with Docker and orchestrated on Kubernetes, with a Horizontal Pod Autoscaler (2–10 pods) that scales replicas up under load and back down at idle — zero-downtime the whole way.</li>
+          </ul>
+          <div class="proj-metrics">
+            <div class="metric"><b>85%</b><span>Accuracy</span></div>
+            <div class="metric"><b>0.88</b><span>ROC-AUC</span></div>
+            <div class="metric"><b>2–10</b><span>Autoscaled pods</span></div>
+          </div>
+          <div class="proj-stack">
+            <span>Python</span><span>FastAPI</span><span>XGBoost</span><span>scikit-learn</span><span>Docker</span><span>Kubernetes</span><span>PyTest</span>
+          </div>
+          <div class="proj-roadmap">
+            <h4>What's next</h4>
+            <ul>
+              <li>Add SHAP-based explainability so each prediction ships with the "why," not just a score.</li>
+              <li>Trigger retraining automatically on data drift instead of running it manually.</li>
+              <li>Build a lightweight dashboard so non-technical stakeholders can explore churn segments themselves.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="proj-card">
+          <div class="proj-top">
+            <div>
+              <h3>DPI Engine — Deep Packet Inspection System</h3>
+              <div class="proj-when">Mar 2026</div>
+            </div>
+            <div class="proj-links">
+              <a href="https://github.com/shivamRoy04" target="_blank" rel="noopener" aria-label="View source on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.9-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.61.69.5A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg>
+              </a>
+            </div>
+          </div>
+          <ul class="proj-desc">
+            <li>A Java-based PCAP packet analyser that walks raw capture files through three protocol layers — Ethernet → IPv4 → TCP/UDP — parsing headers by hand, byte by byte, with zero external libraries.</li>
+            <li>Parses the TLS handshake directly to pull out the SNI (Server Name Indication) hostname, which is enough to identify which of 20+ apps a connection belongs to without ever decrypting the traffic.</li>
+            <li>Tracks live connections with a 5-tuple flow tracker (source/destination IP, ports, protocol) feeding a rule engine that can block traffic at the IP, application, or domain level.</li>
+            <li>Built with no dependency on existing packet-parsing libraries — every layer, from Ethernet frames to TLS records, is decoded from scratch, which forced a genuinely low-level understanding of how the stack fits together.</li>
+          </ul>
+          <div class="proj-metrics">
+            <div class="metric"><b>3</b><span>Protocol layers parsed</span></div>
+            <div class="metric"><b>20+</b><span>Apps classified</span></div>
+            <div class="metric"><b>0</b><span>External dependencies</span></div>
+          </div>
+          <div class="proj-stack">
+            <span>Java 17</span><span>PCAP</span><span>TCP/IP</span><span>TLS / SNI</span><span>Protocol Analysis</span>
+          </div>
+          <div class="proj-roadmap">
+            <h4>What's next</h4>
+            <ul>
+              <li>Extend classification to QUIC/HTTP3 traffic, which is increasingly common and bypasses classic TLS parsing.</li>
+              <li>Add a real-time alerting layer on top of the rule engine instead of relying on log review.</li>
+              <li>Build a small web UI to visualize live flows instead of reading raw console output.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="proj-card">
+          <div class="proj-top">
+            <div>
+              <h3>Traveller's Hub — Hotel Booking Platform</h3>
+              <div class="proj-when">Jun – Jul 2025</div>
+            </div>
+            <div class="proj-links">
+              <a href="https://github.com/shivamRoy04" target="_blank" rel="noopener" aria-label="View source on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.9-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.61.69.5A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg>
+              </a>
+              <!-- LIVE_URL_PLACEHOLDER: replace the # below with your Render URL, e.g. https://travellers-hub.onrender.com -->
+              <a href="#" target="_blank" rel="noopener" aria-label="View live demo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+              </a>
+            </div>
+          </div>
+          <ul class="proj-desc">
+            <li>A full-stack hotel &amp; listing marketplace built end to end on MVC — OAuth login (Passport.js), listing CRUD, Cloudinary-backed media uploads, and Joi schema validation guarding every form submission.</li>
+            <li>Rebuilt slow API endpoints and added Mapbox real-time maps, cutting response times by 25% and making it noticeably easier for users to find and navigate to a listing (~30% improvement in navigation efficiency).</li>
+            <li>Deployed to Render with production-grade session management and role-based access control, so hosts and guests see different permissions on the same listing.</li>
+          </ul>
+          <div class="proj-metrics">
+            <div class="metric"><b>25%</b><span>Faster API responses</span></div>
+            <div class="metric"><b>30%</b><span>Navigation efficiency</span></div>
+          </div>
+          <div class="proj-stack">
+            <span>Node.js</span><span>Express.js</span><span>MongoDB Atlas</span><span>Cloudinary</span><span>Passport.js</span><span>Tailwind CSS</span>
+          </div>
+          <div class="proj-roadmap">
+            <h4>What's next</h4>
+            <ul>
+              <li>Wire up a real payments provider (Razorpay/Stripe) to complete the booking-to-payment flow.</li>
+              <li>Add a host-side analytics dashboard — views, booking conversion, occupancy trends.</li>
+              <li>Introduce a review &amp; rating system for listings.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="proj-card">
+          <div class="proj-top">
+            <div>
+              <h3>Zerodha / Kite Clone — Trading UI</h3>
+              <div class="proj-when">Jul 2025 — Ongoing</div>
+            </div>
+            <div class="proj-links">
+              <a href="https://github.com/shivamRoy04" target="_blank" rel="noopener" aria-label="View source on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.9-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.61.69.5A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg>
+              </a>
+            </div>
+          </div>
+          <ul class="proj-desc">
+            <li>A pixel-perfect React SPA replicating Zerodha Kite's trading layout — portfolio holdings view, live/mock data feeds, and a limit-order simulation flow that mirrors how a real order ticket behaves.</li>
+            <li>Built as a modular, mobile-first component architecture from the start, specifically so new views (watchlists, charts, order books) can be dropped in without restructuring existing screens.</li>
+          </ul>
+          <div class="proj-stack">
+            <span>React.js</span><span>Tailwind CSS</span><span>Bootstrap</span><span>REST API Integration</span>
+          </div>
+          <div class="proj-roadmap">
+            <h4>What's next</h4>
+            <ul>
+              <li>Replace the mock data feed with a real market-data WebSocket connection for live pricing.</li>
+              <li>Add an order history &amp; P&amp;L tracking view.</li>
+              <li>Add a dark/light theme toggle to match the real Kite app.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Example hidden project card — remove `hidden` to show it -->
+        <article class="proj-card" hidden>
+          <div class="proj-top">
+            <div><h3>Project Name</h3><div class="proj-when">Month Year</div></div>
+            <div class="proj-links">
+              <a href="#" target="_blank" rel="noopener" aria-label="View source on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.9-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.61.69.5A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg>
+              </a>
+            </div>
+          </div>
+          <ul class="proj-desc"><li>Describe the project outcome in one or two lines — favor a concrete number over an adjective.</li></ul>
+          <div class="proj-metrics">
+            <div class="metric"><b>0%</b><span>Replace with a real metric</span></div>
+          </div>
+          <div class="proj-stack"><span>Tech</span><span>Stack</span></div>
+          <div class="proj-roadmap">
+            <h4>What's next</h4>
+            <ul><li>Add a planned improvement here.</li></ul>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CERTIFICATIONS =================
+       To hide a certification: add  hidden  to its <div class="cert-item" ...> tag. -->
+  <section id="certifications">
+    <div class="wrap">
+      <div class="figure reveal"><span class="num">FIG. 05</span><h2>Certifications</h2><span class="line"></span></div>
+
+      <div class="cert-list reveal">
+        <div class="cert-item">
+          <div><div class="c-name">IBM Data Science Professional Certificate</div><div class="c-issuer">Coursera</div></div>
+          <span class="cert-badge">Completed</span>
+        </div>
+        <div class="cert-item">
+          <div><div class="c-name">Deep Skilling Program — .NET</div><div class="c-issuer">Cognizant</div></div>
+          <span class="cert-badge">Completed</span>
+        </div>
+        <div class="cert-item">
+          <div><div class="c-name">DevOps Foundations</div><div class="c-issuer">Oracle</div></div>
+          <span class="cert-badge">Completed</span>
+        </div>
+        <div class="cert-item">
+          <div><div class="c-name">Generative AI Applications</div><div class="c-issuer">Coursera</div></div>
+          <span class="cert-badge">Completed</span>
+        </div>
+        <div class="cert-item">
+          <div><div class="c-name">Prompt Engineering for Developers</div><div class="c-issuer">Coursera</div></div>
+          <span class="cert-badge">Completed</span>
+        </div>
+        <div class="cert-item">
+          <div><div class="c-name">Full-Stack Web Development Bootcamp</div><div class="c-issuer">ApnaCollege</div></div>
+          <span class="cert-badge">Completed</span>
+        </div>
+        <!-- Example hidden certification — remove `hidden` to show it -->
+        <div class="cert-item" hidden>
+          <div><div class="c-name">Certification Name</div><div class="c-issuer">Issuer</div></div>
+          <span class="cert-badge">Completed</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EDUCATION ================= -->
+  <section id="education">
+    <div class="wrap">
+      <div class="figure reveal"><span class="num">FIG. 06</span><h2>Education</h2><span class="line"></span></div>
+      <div class="reveal">
+        <div class="edu-item">
+          <div>
+            <h3>Kalinga Institute of Industrial Technology (KIIT), Bhubaneswar</h3>
+            <div class="deg">B.Tech — Computer Science &amp; Technology</div>
+            <div class="score">CGPA: 8.52 / 10.0</div>
+          </div>
+          <time>Sep 2022 — Jun 2026</time>
+        </div>
+        <div class="edu-item">
+          <div>
+            <h3>Shivam Convent, Patna</h3>
+            <div class="deg">CBSE Class XII</div>
+            <div class="score">88%</div>
+          </div>
+          <time>2019 — 2021</time>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <footer id="contact">
+    <div class="wrap">
+      <div class="contact-box reveal">
+        <h2>Let's build something.</h2>
+        <p>Open to Java Full Stack, .NET, Data Engineering, DevOps, and QA roles — reach out any time.</p>
+        <div class="contact-actions">
+          <a class="btn primary" href="mailto:shivamkumarroy04@gmail.com">Email me</a>
+          <a class="btn ghost" href="https://linkedin.com/in/shivam-roy-438a81264" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn ghost" href="https://github.com/shivamRoy04" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 Shivam Roy.</span>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuBtn.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+  }));
+
+  // Reveal-on-scroll
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!prefersReduced && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  }
+</script>
+
+</body>
+</html>
